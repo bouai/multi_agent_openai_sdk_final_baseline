@@ -1,0 +1,10 @@
+from run_context import RunContext
+
+def get_activity_info(city: str, run_context: RunContext):
+    try:
+        run_context.log(f"🎯 Fetching activity suggestions for {city}")
+        # Simulated logic
+        return f"In {city}, you can visit the museum or take a walk in the park."
+    except Exception as e:
+        run_context.error(f"❌ Error fetching activities for {city}: {str(e)}")
+        return "Activity suggestions are currently unavailable."

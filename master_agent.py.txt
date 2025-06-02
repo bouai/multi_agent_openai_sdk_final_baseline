@@ -1,0 +1,62 @@
+from openai import OpenAI
+from run_context import RunContext
+from multi_agent_openai_sdk_near_final_baseline.config_flags.config_flags import OPENAI_API_KEY
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+def run_master(goal: str, run_context: RunContext):
+    run_context.log("🔁 Starting run_master with goal: " + goal)
+
+    assistant = client.beta.assistants.create(
+        name="Multi-Agent Planner",
+        instructions="You are a helpful planner that breaks down the user's goal into subtasks.",
+        tools=[{"type": "code_interpreter"}],
+        model="gpt-4"
+    )
+    run_context.log("✅ Assistant created")
+
+    thread = client.beta.threads.create()
+    run_context.log("🧵 Thread created")
+
+    client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=goal
+    )
+    run_context.log("📨 Initial message added to thread")
+
+    run = client.beta.threads.runs.create(
+        thread_id=thread.id,
+        assistant_id=assistant.id
+    )
+    run_context.log("🚀 Starting run")
+
+    while run.status != "completed":
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread.id,
+            run_id=run.id
+        )
+        run_context.log(f"⏳ Polling run status: {run.status}")
+
+        if run.status == "requires_action":
+            run_context.log("🛠️ Submitting tool outputs")
+            tool_outputs = [
+                {
+                    "tool_call_id": call.id,
+                    "output": f"Result from tool for input: {call.function.arguments}"
+                }
+                for call in run.required_action.submit_tool_outputs.tool_calls
+            ]
+            run = client.beta.threads.runs.submit_tool_outputs(
+                thread_id=thread.id,
+                run_id=run.id,
+                tool_outputs=tool_outputs
+            )
+
+    run_context.log("✅ Run completed successfully")
+
+    messages = client.beta.threads.messages.list(thread_id=thread.id)
+    final_message = messages.data[-1].content[0].text.value
+    run_context.log("📤 Returning final message from agent")
+
+    return final_message

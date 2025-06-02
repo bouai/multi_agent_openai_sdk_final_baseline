@@ -1,0 +1,18 @@
+from run_context import RunContext
+
+def get_outfit_suggestion(temp_celsius: float, run_context: RunContext):
+    run_context.log(f"👕 Suggesting outfit for temperature: {temp_celsius}°C")
+
+    try:
+        if temp_celsius > 25:
+            run_context.log("☀️ High temperature detected")
+            return "Wear light cotton clothes and sunglasses."
+        elif temp_celsius > 15:
+            run_context.log("🌤️ Mild temperature detected")
+            return "Wear a light jacket."
+        else:
+            run_context.log("❄️ Cold weather detected")
+            return "Wear a warm coat and scarf."
+    except Exception as e:
+        run_context.error(f"❌ Error suggesting outfit: {str(e)}")
+        return "Unable to suggest an outfit at the moment."

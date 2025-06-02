@@ -1,0 +1,5 @@
+id,agent_id,agent_name,goal,agent_type
+1,agent_weather,WeatherAgent,Get weather in Pune,regular
+2,agent_outfit,OutfitAgent,Suggest outfit,regular
+3,agent_activity,ActivityAgent,Recommend activity,regular
+4,master_agent,MasterAgent,Summarize Pune weather and suggest outfit,master

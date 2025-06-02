@@ -1,0 +1,10 @@
+from run_context import RunContext
+
+def get_weather_info(location: str, run_context: RunContext):
+    try:
+        run_context.log(f"🌤️ Fetching weather info for {location}")
+        # Simulated logic
+        return f"The weather in {location} is sunny with a high of 30°C."
+    except Exception as e:
+        run_context.error(f"❌ Error fetching weather for {location}: {str(e)}")
+        return "Weather information is currently unavailable."
