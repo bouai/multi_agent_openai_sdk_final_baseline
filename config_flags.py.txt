@@ -1,0 +1,2 @@
+# Flag to toggle between default SDK plan and custom logic
+USE_CUSTOM_PLAN = 1  # 0 = Use OpenAI SDK planning, 1 = Use custom logic

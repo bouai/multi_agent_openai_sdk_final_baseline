@@ -1,0 +1,26 @@
+from master_agent import run_master
+from agent_weather import get_weather
+from agent_outfit import suggest_outfit
+from agent_activity import recommend_activity
+
+# Default SDK-based execution
+async def run_default_master(goal: str):
+    return await run_master(goal)
+
+# Custom sequential logic based on domain conditions
+async def run_custom_master(goal: str):
+    print(f"Running custom plan for goal: {goal}")
+
+    weather = await get_weather(goal)
+    print(f"[Custom] Weather Info: {weather}")
+
+    if "cold" in weather.lower() or "below -20" in weather.lower():
+        return f"Too cold: {weather}. Stay indoors!"
+
+    outfit = await suggest_outfit(weather)
+    print(f"[Custom] Suggested Outfit: {outfit}")
+
+    activity = await recommend_activity(f"{weather}, {outfit}")
+    print(f"[Custom] Suggested Activity: {activity}")
+
+    return f"Weather: {weather}\nOutfit: {outfit}\nActivity: {activity}"
